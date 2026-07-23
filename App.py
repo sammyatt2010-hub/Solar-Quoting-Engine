@@ -152,6 +152,26 @@ def calculate_quote(num_panels: int, cfg: dict) -> dict:
 
 cfg = load_config()
 
+# ---------------------------------------------------------------------------
+# Site-wide access gate (separate from the admin password below).
+# Nothing else in the app renders until this is unlocked.
+# ---------------------------------------------------------------------------
+
+if "site_unlocked" not in st.session_state:
+    st.session_state.site_unlocked = False
+
+if not st.session_state.site_unlocked:
+    st.title(cfg["branding"]["company_name"])
+    st.caption("Enter the access password to continue.")
+    site_pw = st.text_input("Access password", type="password", key="site_pw_input")
+    if st.button("Enter"):
+        if hash_password(site_pw) == cfg.get("site_password_hash"):
+            st.session_state.site_unlocked = True
+            st.rerun()
+        else:
+            st.error("Incorrect password.")
+    st.stop()
+
 st.sidebar.title(cfg["branding"]["company_name"])
 mode = st.sidebar.radio("Mode", ["Quotation Tool", "Admin Panel"])
 
@@ -204,8 +224,9 @@ if mode == "Admin Panel":
         term_months = st.number_input("Rental term (months)", value=cfg["pricing"]["term_months"], step=6)
         commission = st.number_input("Consultant commission (£)", value=cfg["pricing"]["commission_gbp"], step=10)
 
-    st.subheader("Change Admin Password")
-    new_pw = st.text_input("New admin password (leave blank to keep current)", type="password")
+    st.subheader("Change Passwords")
+    new_site_pw = st.text_input("New site access password (leave blank to keep current)", type="password", key="new_site_pw")
+    new_pw = st.text_input("New admin password (leave blank to keep current)", type="password", key="new_admin_pw")
 
     if st.button("Save Settings", type="primary"):
         cfg["panel"]["width_m"] = panel_w
@@ -220,6 +241,8 @@ if mode == "Admin Panel":
         cfg["pricing"]["commission_gbp"] = commission
         if new_pw:
             cfg["admin_password_hash"] = hash_password(new_pw)
+        if new_site_pw:
+            cfg["site_password_hash"] = hash_password(new_site_pw)
         save_config(cfg)
         st.success("Settings saved.")
 

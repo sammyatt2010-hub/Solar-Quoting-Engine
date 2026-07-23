@@ -1,0 +1,21 @@
+{
+  "admin_password_hash": "272fbf8b6c57db9699c1f149071b59c831318a282e35d97022381d82e530e598",
+  "branding": {
+    "company_name": "Novalink Renewables",
+    "primary_color": "#1B7A3E"
+  },
+  "panel": {
+    "width_m": 1.7,
+    "height_m": 1.1,
+    "wattage_w": 430,
+    "packing_efficiency": 0.85
+  },
+  "pricing": {
+    "cost_per_panel_gbp": 250,
+    "install_base_cost_gbp": 1500,
+    "install_cost_per_panel_gbp": 120,
+    "rental_monthly_per_panel_gbp": 8,
+    "term_months": 120,
+    "commission_gbp": 300
+  }
+}
